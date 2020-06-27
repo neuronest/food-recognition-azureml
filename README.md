@@ -60,8 +60,3 @@ DATASTORE_NAME: Datastore name for Azure ML
 COMPUTE_NAME: Machine Learning Compute name 
 COMPUTE_NAME_INFERENCE: Kubernetes Service name
 ```
-
-### Architecture schema
-
-<img src="/schemas/customcnn_schema.jpg"  width="50%" height="50%">
-
