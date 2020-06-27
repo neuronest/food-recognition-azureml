@@ -1,0 +1,12 @@
+**.DS_Store
+**.pyc
+**.ipynb
+config/development.yml
+config/production.yml
+config/staging.yml
+notebooks/
+.idea/
+__pycache__/
+
+# Python environment
+.env
