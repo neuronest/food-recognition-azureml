@@ -1,10 +1,10 @@
 
-# Dessert recognition
+# Food recognition
 
 
 ## Documentation <a name="documentation"></a>
 
-**Dessert recognition** is a Data Science project that aims to classify types of dessert using their photographs.
+**Food recognition** is a Data Science project that aims to classify types of dishes using their photographs.
 
 ## Repository Structure <a name="repository-structure"></a>
 
@@ -36,8 +36,8 @@
 
 
 ```shell**
-git clone https://github.com/neuronest/dessert_recognition.git
-cd dessert_recognition
+git clone https://github.com/neuronest/food_recognition.git
+cd food_recognition
 source install.sh
 ```
 
