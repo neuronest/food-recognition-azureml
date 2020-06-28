@@ -4,7 +4,7 @@
 
 ## Documentation <a name="documentation"></a>
 
-**Food recognition** is a end-to-end Data Science project that aims to classify types of dishes using their photographs, using Deep Convolutional Neural Network. <br>
+**Food recognition** is a end-to-end Data Science project that aims to classify types of dishes with their photographs, using Deep Convolutional Neural Network. <br>
 Data used here is directly based on the Food-101 dataset (https://www.tensorflow.org/datasets/catalog/food101). <br>
 Of course, a food classification task is an excuse: the same processes can be applied on a wide variety of computer vision tasks. <br>
 This repository contains the entire code to:
