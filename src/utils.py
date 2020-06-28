@@ -28,10 +28,7 @@ def get_extension_from_filename(filename):
     return os.path.splitext(filename)[-1]
 
 
-def read_image_local(
-        path: str,
-        target_size: bool = None
-) -> np.ndarray:
+def read_image_local(path: str, target_size: bool = None) -> np.ndarray:
     """
     Image reader from local.
     The image is resized to target_size if needed
@@ -42,10 +39,7 @@ def read_image_local(
         return np.asarray(load_img(path))
 
 
-def write_image_local(
-        path: str,
-        image: np.ndarray
-) -> None:
+def write_image_local(path: str, image: np.ndarray) -> None:
     """
     Image writer to local.
     """
@@ -53,13 +47,14 @@ def write_image_local(
 
 
 def read_text_azure(
-    blob_service_client: BlobServiceClient,
-    container: str,
-    blob: str,
+    blob_service_client: BlobServiceClient, container: str, blob: str,
 ) -> str:
-    return blob_service_client.get_blob_client(
-        container, blob
-    ).download_blob().readall().decode("utf-8")
+    return (
+        blob_service_client.get_blob_client(container, blob)
+        .download_blob()
+        .readall()
+        .decode("utf-8")
+    )
 
 
 def write_text_azure(
@@ -67,11 +62,9 @@ def write_text_azure(
     container: str,
     blob: str,
     text: str,
-    overwrite=False
+    overwrite=False,
 ) -> None:
-    blob_object = blob_service_client.get_blob_client(
-        container, blob
-    )
+    blob_object = blob_service_client.get_blob_client(container, blob)
     blob_object.upload_blob(text, overwrite=overwrite)
 
 
@@ -82,16 +75,15 @@ def read_image_azure(
     target_size: tuple = None,
     to_numpy: bool = False,
     to_float32: bool = False,
-    channels: int = 3
+    channels: int = 3,
 ) -> Union[np.ndarray, tf.python.framework.ops.EagerTensor]:
     """
     Image reader from Azure Blob Storage.
     The image is resized to target_size if resize_image is True, and can be casted to numpy array if needed
     """
-    image_bytes = blob_service_client.get_blob_client(
-        container,
-        blob
-    ).download_blob().readall()
+    image_bytes = (
+        blob_service_client.get_blob_client(container, blob).download_blob().readall()
+    )
     image = tf.image.decode_image(image_bytes, channels=channels)
     if target_size is not None:
         image = tf.image.resize(image, size=target_size)
@@ -109,7 +101,7 @@ def write_image_azure(
     image: Union[np.ndarray, tf.python.framework.ops.EagerTensor],
     target_size: tuple = None,
     from_float32: bool = False,
-    overwrite=False
+    overwrite=False,
 ) -> None:
     """
     Image writer on Azure Blob Storage
@@ -130,7 +122,13 @@ def write_image_azure(
 
 
 def service_query(
-    service_uri, service_key, image, container, blob, number_of_passes, return_probabilities
+    service_uri,
+    service_key,
+    image,
+    container,
+    blob,
+    number_of_passes,
+    return_probabilities,
 ):
     header = {
         "Content-Type": "application/json",

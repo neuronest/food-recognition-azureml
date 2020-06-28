@@ -24,7 +24,9 @@ if __name__ == "__main__":
     container_name = settings["CONTAINER_NAME"]
     dataset_name = settings["DATASET_NAME"]
     connexion_string = ";".join(
-        map(lambda x: "=".join([x, settings["CREDENTIALS"][x]]), settings["CREDENTIALS"])
+        map(
+            lambda x: "=".join([x, settings["CREDENTIALS"][x]]), settings["CREDENTIALS"]
+        )
     )
     blob_service_client = BlobServiceClient.from_connection_string(connexion_string)
     print("Downloading source data...")
@@ -43,11 +45,19 @@ if __name__ == "__main__":
     except ResourceExistsError:
         pass
     classes = "\n".join(
-        sorted(os.listdir(os.path.join(
-            temporary_file_location, settings["DATASET_NAME"], PathsConfig.data_train
-        )))
+        sorted(
+            os.listdir(
+                os.path.join(
+                    temporary_file_location,
+                    settings["DATASET_NAME"],
+                    PathsConfig.data_train,
+                )
+            )
+        )
     )
-    blob_object = blob_service_client.get_blob_client(container_name, PathsConfig.classes)
+    blob_object = blob_service_client.get_blob_client(
+        container_name, PathsConfig.classes
+    )
     blob_object.upload_blob(classes)
     for root, dirs, files in os.walk(temporary_file_location):
         for file in files:
@@ -59,7 +69,11 @@ if __name__ == "__main__":
             if filename.endswith(GeneralConfig.image_extension):
                 image = read_image_local(filename)
                 write_image_azure(
-                    blob_service_client, container_name, blob_name, image, overwrite=False
+                    blob_service_client,
+                    container_name,
+                    blob_name,
+                    image,
+                    overwrite=False,
                 )
     shutil.rmtree(temporary_file_location)
     print("Data uploaded!")

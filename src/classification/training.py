@@ -56,10 +56,12 @@ def initialize_callbacks():
         verbose=GeneralConfig.verbose,
     )
     clr = CyclicLR(
-        base_lr=learning_rate / 10, max_lr=learning_rate,
-        step_size=step_size, verbose=1,
+        base_lr=learning_rate / 10,
+        max_lr=learning_rate,
+        step_size=step_size,
+        verbose=1,
         monitor="val_loss",
-        reduce_on_plateau=None
+        reduce_on_plateau=None,
     )
     callbacks = azureml_logger, early_stopper, clr
     return callbacks
@@ -79,7 +81,7 @@ def get_data_generator(augmented: bool):
             samplewise_center=ModelConfig.samplewise_center,
             samplewise_std_normalization=ModelConfig.samplewise_std_normalization,
             rescale=ModelConfig.rescale,
-            preprocessing_function=preprocess_input
+            preprocessing_function=preprocess_input,
         )
     else:
         generator_schema = ImageDataGenerator(
@@ -88,12 +90,14 @@ def get_data_generator(augmented: bool):
             samplewise_center=ModelConfig.samplewise_center,
             samplewise_std_normalization=ModelConfig.samplewise_std_normalization,
             rescale=ModelConfig.rescale,
-            preprocessing_function=preprocess_input
+            preprocessing_function=preprocess_input,
         )
     return generator_schema
 
 
-def tta_inference(model: ResNet50Wrapper, data_folder: str, input_dim: int, passes: int) -> np.ndarray:
+def tta_inference(
+    model: ResNet50Wrapper, data_folder: str, input_dim: int, passes: int
+) -> np.ndarray:
     tta_predictions = []
     samples, _ = next(
         ImageDataGenerator().flow_from_directory(
@@ -101,7 +105,7 @@ def tta_inference(model: ResNet50Wrapper, data_folder: str, input_dim: int, pass
             batch_size=ModelConfig.normalization_samples,
             shuffle=True,
             target_size=(input_dim, input_dim),
-            class_mode='categorical',
+            class_mode="categorical",
         )
     )
     test_generator_schema = get_data_generator(augmented=True)
@@ -112,7 +116,7 @@ def tta_inference(model: ResNet50Wrapper, data_folder: str, input_dim: int, pass
             batch_size=ModelConfig.batch_size,
             shuffle=False,
             target_size=(input_dim, input_dim),
-            class_mode='categorical'
+            class_mode="categorical",
         )
         tta_predictions.append(model.predict(test_generator))
     return np.mean(tta_predictions, axis=0)
@@ -142,13 +146,24 @@ if __name__ == "__main__":
     args = parser.parse_args()
     data_folder = args.data_folder
 
-    input_dim = args.input_dim or ModelConfig.pretrained_resnet50_hyperparams["input_dim"]
-    learning_rate = args.learning_rate or ModelConfig.pretrained_resnet50_hyperparams["learning_rate"]
+    input_dim = (
+        args.input_dim or ModelConfig.pretrained_resnet50_hyperparams["input_dim"]
+    )
+    learning_rate = (
+        args.learning_rate
+        or ModelConfig.pretrained_resnet50_hyperparams["learning_rate"]
+    )
 
     print("Initializing generators...")
-    augmented_generator_schema, generator_schema = \
-        get_data_generator(augmented=True), get_data_generator(augmented=False)
-    train_generator_schema = augmented_generator_schema if ModelConfig.data_augmentation else generator_schema
+    augmented_generator_schema, generator_schema = (
+        get_data_generator(augmented=True),
+        get_data_generator(augmented=False),
+    )
+    train_generator_schema = (
+        augmented_generator_schema
+        if ModelConfig.data_augmentation
+        else generator_schema
+    )
     test_generator_schema = generator_schema
 
     samples, _ = next(
@@ -157,7 +172,7 @@ if __name__ == "__main__":
             batch_size=ModelConfig.normalization_samples,
             shuffle=True,
             target_size=(input_dim, input_dim),
-            class_mode='categorical',
+            class_mode="categorical",
         )
     )
     train_generator_schema.fit(samples)
@@ -165,9 +180,9 @@ if __name__ == "__main__":
 
     os.makedirs(PathsConfig.generators_directory, exist_ok=True)
 
-    with open(PathsConfig.augmented_image_generator_path, 'wb') as fp:
+    with open(PathsConfig.augmented_image_generator_path, "wb") as fp:
         pickle.dump(augmented_generator_schema, fp, protocol=pickle.HIGHEST_PROTOCOL)
-    with open(PathsConfig.image_generator_path, 'wb') as fp:
+    with open(PathsConfig.image_generator_path, "wb") as fp:
         pickle.dump(generator_schema, fp, protocol=pickle.HIGHEST_PROTOCOL)
 
     train_generator = train_generator_schema.flow_from_directory(
@@ -175,7 +190,7 @@ if __name__ == "__main__":
         batch_size=ModelConfig.batch_size,
         shuffle=True,
         target_size=(input_dim, input_dim),
-        class_mode='categorical'
+        class_mode="categorical",
     )
 
     test_generator = test_generator_schema.flow_from_directory(
@@ -183,7 +198,7 @@ if __name__ == "__main__":
         batch_size=ModelConfig.batch_size,
         shuffle=True,
         target_size=(input_dim, input_dim),
-        class_mode='categorical'
+        class_mode="categorical",
     )
 
     num_samples = train_generator.n
@@ -203,7 +218,7 @@ if __name__ == "__main__":
         steps_per_epoch=train_generator.samples // train_generator.batch_size,
         validation_steps=test_generator.samples // test_generator.batch_size,
         epochs=ModelConfig.epochs,
-        callbacks=callbacks
+        callbacks=callbacks,
     )
     training_time = time.time() - time_anchor
     print("Model trained")
@@ -220,7 +235,7 @@ if __name__ == "__main__":
         batch_size=ModelConfig.batch_size,
         shuffle=False,
         target_size=(input_dim, input_dim),
-        class_mode='categorical'
+        class_mode="categorical",
     )
     time_anchor = time.time()
     y_pred_proba = model.predict(test_generator_inference)
@@ -234,10 +249,12 @@ if __name__ == "__main__":
         model=model,
         data_folder=data_folder,
         input_dim=input_dim,
-        passes=ModelConfig.tta_augmentation_passes
+        passes=ModelConfig.tta_augmentation_passes,
     )
     averaged_tta_predictions = np.argmax(averaged_tta_predictions_proba, axis=1)
-    per_sample_tta_inference_time = (time.time() - time_anchor) / test_generator_inference.n
+    per_sample_tta_inference_time = (
+        time.time() - time_anchor
+    ) / test_generator_inference.n
 
     run.log("Final test loss", log_loss(y_true, y_pred_proba))
     run.log("Final test accuracy", accuracy_score(y_true, y_pred))

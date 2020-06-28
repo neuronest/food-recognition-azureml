@@ -6,7 +6,6 @@ class GeneralConfig:
     validation_split = 0.2
     seed = 42
     verbose = True
-    # Possible architecture types: {PretrainedResNet50}
     architecture_type = "PretrainedResNet50"
     # Data image extension
     image_extension = ".jpg"
@@ -96,7 +95,9 @@ class PathsConfig:
     outputs_directory = "outputs"
     generators_directory = os.path.join(outputs_directory, "generators")
     image_generator_path = os.path.join(generators_directory, "image_generator.pkl")
-    augmented_image_generator_path = os.path.join(generators_directory, "augmented_image_generator.pkl")
+    augmented_image_generator_path = os.path.join(
+        generators_directory, "augmented_image_generator.pkl"
+    )
     predictions_directory = os.path.join(outputs_directory, "predictions")
     model_directory = os.path.join(outputs_directory, "model")
     confusion_matrix_path = "confusion_matrix.jpg"

@@ -25,7 +25,9 @@ if __name__ == "__main__":
     container_name = settings["CONTAINER_NAME"]
     datastore_name = settings["DATASTORE_NAME"]
     connexion_string = ";".join(
-        map(lambda x: "=".join([x, settings["CREDENTIALS"][x]]), settings["CREDENTIALS"])
+        map(
+            lambda x: "=".join([x, settings["CREDENTIALS"][x]]), settings["CREDENTIALS"]
+        )
     )
     blob_service_client = BlobServiceClient.from_connection_string(connexion_string)
 
@@ -36,7 +38,9 @@ if __name__ == "__main__":
     )
 
     try:
-        blob_service_client.get_container_client(container_name).get_container_properties()
+        blob_service_client.get_container_client(
+            container_name
+        ).get_container_properties()
     except ResourceNotFoundError:
         raise ResourceNotFoundError(
             "Data is not properly loaded into Azure Blob Storage, please run download_and_store_data.py first"
@@ -68,7 +72,7 @@ if __name__ == "__main__":
         pip_packages=GeneralConfig.pip_packages,
         entry_script=PathsConfig.entry_script,
         use_gpu=True,
-        custom_docker_image=settings["IMAGE_NAME"]
+        custom_docker_image=settings["IMAGE_NAME"],
     )
     if GeneralConfig.hyperdrive:
         if GeneralConfig.architecture_type == "PretrainedResNet50":

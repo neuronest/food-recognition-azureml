@@ -33,15 +33,10 @@ compute_name = settings["COMPUTE_NAME_INFERENCE"]
 parser = argparse.ArgumentParser()
 parser.add_argument("--run-id", type=str, dest="run_id", help="Run id")
 parser.add_argument(
-    "--test-only",
-    action="store_true",
-    help="Test an already deployed model only",
+    "--test-only", action="store_true", help="Test an already deployed model only",
 )
 parser.add_argument(
-    "--container",
-    type=str,
-    help="Inference container source",
-    default="source",
+    "--container", type=str, help="Inference container source", default="source",
 )
 parser.add_argument(
     "--blob",
@@ -60,14 +55,18 @@ blob = args.blob
 service_name_suffix = args.service_name_suffix
 
 experiment_name = "-".join(
-        [settings["DATASTORE_NAME"], GeneralConfig.architecture_type]
-    )
-model_name = experiment_name[:32]  # provided model name to Azure must have at most 32 characters
+    [settings["DATASTORE_NAME"], GeneralConfig.architecture_type]
+)
+model_name = experiment_name[
+    :32
+]  # provided model name to Azure must have at most 32 characters
 service_name = experiment_name.lower()
 service_name = (
     service_name + "-" + service_name_suffix if service_name_suffix else service_name
 )
-service_name = service_name[:32]  # provided service name to Azure must have at most 32 characters
+service_name = service_name[
+    :32
+]  # provided service name to Azure must have at most 32 characters
 
 
 def test_service(service, container, blob, write_logs=True):
@@ -98,7 +97,9 @@ if __name__ == "__main__":
         print("Run id not found, exiting...")
         sys.exit()
     model = run.register_model(
-        model_name=model_name, model_path=PathsConfig.outputs_directory, tags={"run_id": run_id}
+        model_name=model_name,
+        model_path=PathsConfig.outputs_directory,
+        tags={"run_id": run_id},
     )
     cd = CondaDependencies.create()
     for conda_package in conda_packages:
@@ -107,8 +108,7 @@ if __name__ == "__main__":
         cd.add_pip_package(pip_package)
     cd.add_tensorflow_pip_package(core_type="gpu", version="2.2.0")
     cd.save_to_file(
-        base_directory="src/classification/deployment",
-        conda_file_path="env.yml",
+        base_directory="src/classification/deployment", conda_file_path="env.yml",
     )
     if compute_name in ws.compute_targets:
         compute_target = ws.compute_targets[compute_name]

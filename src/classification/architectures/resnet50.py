@@ -11,7 +11,7 @@ from tensorflow.keras.layers import (
     GlobalAveragePooling2D,
     Dropout,
     BatchNormalization,
-    Flatten
+    Flatten,
 )
 from tensorflow.keras.optimizers import Adam
 
@@ -65,7 +65,9 @@ class ResNet50Wrapper(Model):
         )
         # Batch-norm layers have to be retrained since the dataset is not the same
         for index, layer in enumerate(self.backbone.layers):
-            if index < freezed_conv_layers and not isinstance(layer, BatchNormalization):
+            if index < freezed_conv_layers and not isinstance(
+                layer, BatchNormalization
+            ):
                 layer.trainable = False
             else:
                 layer.trainable = True

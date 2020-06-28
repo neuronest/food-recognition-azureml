@@ -4,9 +4,20 @@ import numpy as np
 
 
 class CyclicLR(Callback):
-    def __init__(self, base_lr=0.001, max_lr=0.006, step_size=2000., mode='triangular', gamma=1.,
-                 reduce_on_plateau=0, monitor='val_loss', reduce_factor=2,
-                 max_momentum=0.95, min_momentum=0.85, verbose=1):
+    def __init__(
+        self,
+        base_lr=0.001,
+        max_lr=0.006,
+        step_size=2000.0,
+        mode="triangular",
+        gamma=1.0,
+        reduce_on_plateau=0,
+        monitor="val_loss",
+        reduce_factor=2,
+        max_momentum=0.95,
+        min_momentum=0.85,
+        verbose=1,
+    ):
         """
         References:
             Original Paper: https://arxiv.org/abs/1803.09820
@@ -22,17 +33,17 @@ class CyclicLR(Callback):
         self.step_size = step_size
         self.mode = mode
         self.gamma = gamma
-        if self.mode == 'triangular':
-            self.scale_fn = lambda x: 1.
-            self.scale_mode = 'cycle'
-        elif self.mode == 'triangular2':
-            self.scale_fn = lambda x: 1 / (2. ** (x - 1))
-            self.scale_mode = 'cycle'
-        elif self.mode == 'exp_range':
+        if self.mode == "triangular":
+            self.scale_fn = lambda x: 1.0
+            self.scale_mode = "cycle"
+        elif self.mode == "triangular2":
+            self.scale_fn = lambda x: 1 / (2.0 ** (x - 1))
+            self.scale_mode = "cycle"
+        elif self.mode == "exp_range":
             self.scale_fn = lambda x: gamma ** x
-            self.scale_mode = 'iterations'
-        self.clr_iterations = 0.
-        self.trn_iterations = 0.
+            self.scale_mode = "iterations"
+        self.clr_iterations = 0.0
+        self.trn_iterations = 0.0
         self.history = {}
         self.orig_base_lr = None
         self.wait = 0
@@ -43,9 +54,9 @@ class CyclicLR(Callback):
         # LR reduction
         self.verbose = verbose
         self.patience = reduce_on_plateau
-        self.factor = 1. / reduce_factor
+        self.factor = 1.0 / reduce_factor
         self.monitor = monitor
-        if 'acc' not in self.monitor:
+        if "acc" not in self.monitor:
             self.monitor_op = lambda a, b: np.less(a, b)
             self.best = np.Inf
         else:
@@ -66,8 +77,7 @@ class CyclicLR(Callback):
 
         self._reset()
 
-    def _reset(self, new_base_lr=None, new_max_lr=None,
-               new_step_size=None):
+    def _reset(self, new_base_lr=None, new_max_lr=None, new_step_size=None):
         """
         Resets cycle iterations.
         Optional boundary/step size adjustment.
@@ -78,16 +88,19 @@ class CyclicLR(Callback):
             self.max_lr = new_max_lr
         if new_step_size is not None:
             self.step_size = new_step_size
-        self.clr_iterations = 0.
+        self.clr_iterations = 0.0
 
     def clr(self):
         cycle = np.floor(1 + self.clr_iterations / (2 * self.step_size))
         x = np.abs(self.clr_iterations / self.step_size - 2 * cycle + 1)
-        if self.scale_mode == 'cycle':
-            return self.base_lr + (self.max_lr - self.base_lr) * np.maximum(0, (1 - x)) * self.scale_fn(cycle)
+        if self.scale_mode == "cycle":
+            return self.base_lr + (self.max_lr - self.base_lr) * np.maximum(
+                0, (1 - x)
+            ) * self.scale_fn(cycle)
         else:
-            return self.base_lr + (self.max_lr - self.base_lr) * np.maximum(0, (1 - x)) * self.scale_fn(
-                self.clr_iterations)
+            return self.base_lr + (self.max_lr - self.base_lr) * np.maximum(
+                0, (1 - x)
+            ) * self.scale_fn(self.clr_iterations)
 
     def on_train_begin(self, logs=None):
         logs = logs or {}
@@ -102,8 +115,8 @@ class CyclicLR(Callback):
         self.trn_iterations += 1
         self.clr_iterations += 1
 
-        self.history.setdefault('lr', []).append(K.get_value(self.model.optimizer.lr))
-        self.history.setdefault('iterations', []).append(self.trn_iterations)
+        self.history.setdefault("lr", []).append(K.get_value(self.model.optimizer.lr))
+        self.history.setdefault("iterations", []).append(self.trn_iterations)
 
         for k, v in logs.items():
             self.history.setdefault(k, []).append(v)
@@ -125,22 +138,27 @@ class CyclicLR(Callback):
         # set momentum
         if self.cycle_momentum:
             if self.overhump:
-                current_percentage = 1. - ((iterations - self.step_size) / float(
-                    self.step_size))
+                current_percentage = 1.0 - (
+                    (iterations - self.step_size) / float(self.step_size)
+                )
                 new_momentum = self.max_momentum - current_percentage * (
-                        self.max_momentum - self.min_momentum)
+                    self.max_momentum - self.min_momentum
+                )
             else:
                 current_percentage = iterations / float(self.step_size)
                 new_momentum = self.max_momentum - current_percentage * (
-                        self.max_momentum - self.min_momentum)
+                    self.max_momentum - self.min_momentum
+                )
             K.set_value(self.model.optimizer.beta_1, new_momentum)
-            self.history.setdefault('momentum', []).append(K.get_value(self.model.optimizer.beta_1))
+            self.history.setdefault("momentum", []).append(
+                K.get_value(self.model.optimizer.beta_1)
+            )
 
     def on_epoch_end(self, epoch, logs=None):
         if self.patience:
             current = logs.get(self.monitor)
             if current is None:
-                raise Exception('cannot monitor %s' % self.monitor)
+                raise Exception("cannot monitor %s" % self.monitor)
             if self.monitor_op(current, self.best):
                 self.best = current
                 self.wait = 0
@@ -156,6 +174,9 @@ class CyclicLR(Callback):
                         new_lr = max(new_lr, min_lr)
                         K.set_value(self.model.optimizer.lr, new_lr)
                         if self.verbose:
-                            print('\nEpoch %05d: Reducing Max LR on Plateau: '
-                                  'new max lr will be %s (if not early_stopping).' % (epoch + 1, self.max_lr))
+                            print(
+                                "\nEpoch %05d: Reducing Max LR on Plateau: "
+                                "new max lr will be %s (if not early_stopping)."
+                                % (epoch + 1, self.max_lr)
+                            )
                         self.wait = 0
