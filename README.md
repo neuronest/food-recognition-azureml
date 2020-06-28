@@ -54,7 +54,7 @@ This repository contains the entire code to:
 - [```src/register_and_deploy.py```](src/register_and_deploy.py) main script to register a trained model and expose it using AKS.
 - [```src/utils.py```](src/utils.py) contains utility functions, especially readers and writers.
 - [```enable_env.sh```](enable_env.sh) enable Anaconda environment.
-- [```install.sh```](enable_env.sh) create and install Anaconda environment.
+- [```install.sh```](install.sh) create and install Anaconda environment.
 
 ## Installation <a name="installation"></a>
 
