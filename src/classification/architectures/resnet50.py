@@ -1,6 +1,6 @@
 """
-Resnet50 architecture in Keras
-Can be used raw or with pretrained Imagenet weights
+Customizable Resnet50 architecture in TensorFlow/Keras with pretrained Imagenet weights
+This implementation uses the model subclassing way
 """
 
 from tensorflow.keras.applications.resnet50 import ResNet50

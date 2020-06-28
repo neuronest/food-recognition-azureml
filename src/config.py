@@ -26,7 +26,7 @@ class GeneralConfig:
 class ModelConfig:
     # General model hyperparameters
     batch_size = 64
-    epochs = 30
+    epochs = 10
     # Early stopping
     patience = 5
     # Normalization samples

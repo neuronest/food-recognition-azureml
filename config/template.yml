@@ -1,11 +1,15 @@
-DATASET_NAME: ""
-DATASET_DRIVE_ID: ""
-SUBSCRIPTION_ID: ""
-RESOURCE_GROUP: ""
-ACCOUNT_NAME: ""
-ACCOUNT_KEY: ""
-CONTAINER_NAME: ""
-WORKSPACE_NAME: ""
-DATASTORE_NAME: ""
-COMPUTE_NAME: ""
-COMPUTE_NAME_INFERENCE: ""
+DATASET_NAME: "food_dataset"
+DATASET_DRIVE_ID: "1XgZNdEAkFkj_SJHSrVAbYyhIWj7QW-wF"
+SUBSCRIPTION_ID: ""  # fill with SUBSCRIPTION_ID
+RESOURCE_GROUP: "rg-food-recognition"
+CREDENTIALS:
+  DefaultEndpointsProtocol: "https"
+  AccountName: ""  # fill with ACCOUNT_NAME
+  AccountKey: ""  # fill with ACCOUNT_KEY
+  EndpointSuffix: "core.windows.net"
+CONTAINER_NAME: "source"
+WORKSPACE_NAME: "mlw-food-recognition"
+DATASTORE_NAME: "foodrecognition"
+IMAGE_NAME: "mcr.microsoft.com/azureml/base-gpu:openmpi3.1.2-cuda10.1-cudnn7-ubuntu18.04"
+COMPUTE_NAME: "compute-food"
+COMPUTE_NAME_INFERENCE: "compute-food-inf"
