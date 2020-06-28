@@ -81,7 +81,7 @@ class HyperdriveConfig:
     }
     evaluation_interval = 2
     slack_factor = 0.1
-    max_total_runs = 100
+    max_total_runs = 15
     max_concurrent_runs = 1
 
 
