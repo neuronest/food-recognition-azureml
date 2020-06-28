@@ -20,7 +20,7 @@ class GeneralConfig:
         "tqdm",
     ]
     # Enable hyperdrive experiments
-    hyperdrive = False
+    hyperdrive = True
 
 
 class ModelConfig:
@@ -66,18 +66,18 @@ class ModelConfig:
 class HyperdriveConfig:
     # Pretrained ResNet50 hyperparameters
     pretrained_resnet50_hyperparams_space = {
-        "--input-dim": [64, 128, 256],
-        "--hidden-dim": [64, 128, 256, 512],
-        "--learning-rate": [1e-5, 1e-4, 1e-3, 1e-2, 1e-1],
-        "--hidden-dim-begin": [128, 256, 512],
-        "--hidden-dim-min": [16, 32, 64, 128],
-        "--activation": ["relu", "elu"],
-        "--batch-normalization": [True, False],
-        "--dropout": [True, False],
-        "--dropout-begin": [0.2, 0.3],
-        "--dropout-max": [0.4, 0.5, 0.6],
-        "--final-average-pooling": [True, False],
-        "--depth": [1, 2, 3, 4, 5],
+        "--input-dim": [112, 224],
+        "--learning-rate": [1e-4],
+        "--hidden-dim-begin": [256],
+        "--hidden-dim-min": [128],
+        "--freezed-conv-layers": [5, 15, 30],
+        "--activation": ["elu"],
+        "--batch-normalization": [True],
+        "--dropout": [True],
+        "--dropout-begin": [0.2],
+        "--dropout-max": [0.5],
+        "--final-average-pooling": [False, True],
+        "--depth": [0, 1, 2],
     }
     evaluation_interval = 2
     slack_factor = 0.1

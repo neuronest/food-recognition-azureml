@@ -62,6 +62,8 @@ if __name__ == "__main__":
     experiment_name = "-".join(
         [settings["DATASTORE_NAME"], GeneralConfig.architecture_type]
     )
+    if GeneralConfig.hyperdrive:
+        experiment_name += "-" + "hyperdrive"
     exp = Experiment(workspace=ws, name=experiment_name)
     source_directory = dirname(__file__)
 
