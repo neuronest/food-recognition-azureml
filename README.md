@@ -76,8 +76,8 @@ SUBSCRIPTION_ID: <subscription_id>
 RESOURCE_GROUP: <resource_group>  
 CREDENTIALS:
   DefaultEndpointsProtocol: "https"
-  AccountName: Azure Storage account name, normally generated within your A
-  AccountKey: Azure Storage account key
+  AccountName: <account_name>, normally generated within your Azure ML workspace
+  AccountKey: <account_key>, normally generated within your Azure ML workspace
   EndpointSuffix: "core.windows.net"
 CONTAINER_NAME: Main data container
 WORKSPACE_NAME: Workspace name for Azure ML
@@ -102,4 +102,16 @@ Prerequisites: you must have a valid Azure subscription with sufficient rights.
 <img src="/images/azure_ml_1.png"  width="75%" height="75%"> <br>
 <img src="/images/azure_ml_2.png"  width="75%" height="75%"> <br>
 <img src="/images/azure_ml_3.png"  width="75%" height="75%"> <br>
+
+At this point, a Storage Account has been created during the process, and you should be able to fill the ACCOUNT_NAME and ACCOUNT_KEY fields in [```config/development.yml```](config/development.yml).
+
 <img src="/images/azure_ml_4.png"  width="75%" height="75%"> <br>
+<img src="/images/azure_ml_5.png"  width="75%" height="75%"> <br>
+
+### Get the data
+
+```shell
+$ python -m src.download_and_store_data
+```
+
+<img src="/images/storage.png"  width="75%" height="75%"> <br>
