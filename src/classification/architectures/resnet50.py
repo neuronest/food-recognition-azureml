@@ -3,6 +3,7 @@ Customizable Resnet50 architecture in TensorFlow/Keras with pretrained Imagenet 
 This implementation uses the model subclassing way
 """
 
+from typing import Tuple
 from tensorflow.keras.applications.resnet50 import ResNet50
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import (
@@ -40,8 +41,8 @@ class InnerDenseBlock(Layer):
 class ResNet50Wrapper(Model):
     def __init__(
         self,
-        input_dim,
-        output_dim,
+        input_dim: Tuple[int, ...],
+        output_dim: int,
         hidden_dim_begin=256,
         hidden_dim_min=128,
         freezed_conv_layers=15,

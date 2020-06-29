@@ -4,20 +4,21 @@ Library containing plotting functions.
 
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.axes import Axes
 from sklearn.utils.multiclass import unique_labels
 
 
 def plot_confusion_matrix(
-    cm,
-    y_true,
-    y_pred,
-    classes,
+    cm: np.ndarray,
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    classes: np.ndarray,
     figsize=(50, 50),
     path=None,
     normalize=False,
     title=None,
     cmap=plt.cm.Blues,
-):
+) -> Axes:
     classes = classes[unique_labels(y_true, y_pred)]
     if normalize:
         cm = cm.astype("float") / cm.sum(axis=1)[:, np.newaxis]

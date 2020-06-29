@@ -69,7 +69,9 @@ service_name = service_name[
 ]  # provided service name to Azure must have at most 32 characters
 
 
-def test_service(service, container, blob, write_logs=True):
+def test_service(
+    service: AksWebservice, container: str, blob: str, write_logs: bool = True
+) -> None:
     if write_logs:
         logs = service.get_logs()
         with open("logs.txt", "w") as fp:

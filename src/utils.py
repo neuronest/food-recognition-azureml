@@ -3,7 +3,7 @@ import json
 import requests
 import numpy as np
 import tensorflow as tf
-from typing import Union
+from typing import Union, Optional
 from azure.storage.blob import BlobServiceClient
 from tensorflow.python.framework.ops import EagerTensor
 from tensorflow.keras.preprocessing.image import load_img, save_img
@@ -14,14 +14,14 @@ except ImportError:
     from .config import GeneralConfig, PathsConfig
 
 
-def remove_extension_from_filename(filename):
+def remove_extension_from_filename(filename: str) -> str:
     """
     Return a filename without its extension
     """
     return os.path.splitext(filename)[0]
 
 
-def get_extension_from_filename(filename):
+def get_extension_from_filename(filename: str) -> str:
     """
     Return the extension from a given filename
     """
@@ -122,20 +122,21 @@ def write_image_azure(
 
 
 def service_query(
-    service_uri,
-    service_key,
-    image,
-    container,
-    blob,
-    number_of_passes,
-    return_probabilities,
+    service_uri: str,
+    service_key: str,
+    image: np.ndarray,
+    container: str,
+    blob: str,
+    number_of_passes: int = 1,
+    return_probabilities: bool = False,
 ):
+    encoded_image = list(tf.image.encode_jpeg(image))
     header = {
         "Content-Type": "application/json",
         "Authorization": "Bearer {}".format(service_key),
     }
     data = {
-        "image": image,
+        "image": encoded_image,
         "container": container,
         "blob": blob,
         "number_of_passes": number_of_passes,
@@ -146,15 +147,17 @@ def service_query(
     return response.content
 
 
-def download_file_from_google_drive(file_id, destination_path):
+def download_file_from_google_drive(file_id: str, destination_path: str) -> None:
     # inspired from https://stackoverflow.com/a/39225039
-    def get_confirm_token(response):
+    def get_confirm_token(response: requests.models.Response) -> Optional[str]:
         for key, value in response.cookies.items():
             if key.startswith("download_warning"):
                 return value
         return None
 
-    def save_response_content(response, destination, chunk_size=32768):
+    def save_response_content(
+        response: requests.models.Response, destination: str, chunk_size: int = 32768
+    ) -> None:
         with open(destination, "wb") as f:
             for chunk in response.iter_content(chunk_size):
                 if chunk:  # filter out keep-alive new chunksqs

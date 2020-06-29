@@ -9,6 +9,7 @@ import os
 import pickle
 import time
 import numpy as np
+from typing import List, Tuple
 from sklearn.metrics import log_loss, accuracy_score, confusion_matrix
 from tensorflow.keras.callbacks import Callback, EarlyStopping
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
@@ -24,13 +25,17 @@ from plot import plot_confusion_matrix
 
 
 class LogRunMetrics(Callback):
-    def on_epoch_end(self, epoch, log=None):
+    """
+    Azure ML metrics logger, a run context is used globally
+    """
+
+    def on_epoch_end(self, epoch: int, log: dict = None) -> None:
         if "val_loss" in log and "val_accuracy" in log:
             run.log("Loss", log["val_loss"])
             run.log("Accuracy", log["val_accuracy"])
 
 
-def initialize_model(args, output_dim) -> ResNet50Wrapper:
+def initialize_model(args: argparse.Namespace, output_dim: int) -> ResNet50Wrapper:
     if GeneralConfig.architecture_type == "PretrainedResNet50":
         model_class = ResNet50Wrapper
         hyperparams = ModelConfig.pretrained_resnet50_hyperparams.copy()
@@ -46,7 +51,7 @@ def initialize_model(args, output_dim) -> ResNet50Wrapper:
     return model_class(**hyperparams)
 
 
-def initialize_callbacks():
+def initialize_callbacks() -> Tuple[Callback, Callback, Callback]:
     azureml_logger = LogRunMetrics()
     early_stopper = EarlyStopping(
         monitor="val_loss",
@@ -67,7 +72,7 @@ def initialize_callbacks():
     return callbacks
 
 
-def get_data_generator(augmented: bool):
+def get_data_generator(augmented: bool) -> ImageDataGenerator:
     if augmented:
         generator_schema = ImageDataGenerator(
             rotation_range=ModelConfig.rotation_range,
@@ -149,7 +154,7 @@ if __name__ == "__main__":
         or ModelConfig.pretrained_resnet50_hyperparams["learning_rate"]
     )
 
-    print("Initializing generators...")
+    print("Initializing generators and model...")
     augmented_generator_schema, generator_schema = (
         get_data_generator(augmented=True),
         get_data_generator(augmented=False),
@@ -203,7 +208,7 @@ if __name__ == "__main__":
     run = Run.get_context()
     callbacks = initialize_callbacks()
     model = initialize_model(args, train_generator.num_classes)
-
+    print("Generators and model initialized")
     print("Training model...")
     time_anchor = time.time()
     history = model.fit(
@@ -217,7 +222,6 @@ if __name__ == "__main__":
     )
     training_time = time.time() - time_anchor
     print("Model trained")
-    print("Inference on test data...")
     os.makedirs(PathsConfig.model_directory, exist_ok=True)
     os.makedirs(PathsConfig.predictions_directory, exist_ok=True)
     model.save(PathsConfig.model_directory)
@@ -232,14 +236,15 @@ if __name__ == "__main__":
         target_size=(input_dim, input_dim),
         class_mode="categorical",
     )
+    y_true = test_generator_inference.labels
+    print("Inference on test data...")
     time_anchor = time.time()
     y_pred_proba = model.predict(test_generator_inference)
     y_pred = np.argmax(y_pred_proba, axis=1)
     per_sample_inference_time = (time.time() - time_anchor) / test_generator_inference.n
-
-    y_true = test_generator_inference.labels
-
     time_anchor = time.time()
+    print("Inference done")
+    print("TTA inference on test data...")
     averaged_tta_predictions_proba = tta_inference(
         model=model,
         data_folder=data_folder,
@@ -250,7 +255,8 @@ if __name__ == "__main__":
     per_sample_tta_inference_time = (
         time.time() - time_anchor
     ) / test_generator_inference.n
-
+    print("TTA inference done")
+    print("Metrics computation and plots generation...")
     run.log("Final test loss", log_loss(y_true, y_pred_proba))
     run.log("Final test accuracy", accuracy_score(y_true, y_pred))
     run.log("Final TTA test accuracy", accuracy_score(y_true, averaged_tta_predictions))
@@ -266,3 +272,4 @@ if __name__ == "__main__":
         path=PathsConfig.confusion_matrix_path,
     )
     run.log_image(name="Confusion matrix", path=PathsConfig.confusion_matrix_path)
+    print("Metrics and plots done")

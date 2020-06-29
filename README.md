@@ -1,6 +1,4 @@
-
 # Food recognition
-
 
 ## Documentation <a name="documentation"></a>
 
@@ -78,7 +76,7 @@ SUBSCRIPTION_ID: <subscription_id>
 RESOURCE_GROUP: <resource_group>  
 CREDENTIALS:
   DefaultEndpointsProtocol: "https"
-  AccountName: Azure Storage account name
+  AccountName: Azure Storage account name, normally generated within your A
   AccountKey: Azure Storage account key
   EndpointSuffix: "core.windows.net"
 CONTAINER_NAME: Main data container
@@ -88,3 +86,20 @@ IMAGE_NAME: Docker base image name
 COMPUTE_NAME: Training cluster name 
 COMPUTE_NAME_INFERENCE: Inference cluster name
 ```
+
+## How to use <a name="how_to_use"></a>
+
+### Azure set up
+
+Prerequisites: you must have a valid Azure subscription with sufficient rights.
+
+1\) Create a resource group
+
+<img src="/images/resource_group.png"  width="50%" height="50%"> <br>
+
+2\) Create a Machine Learning workspace
+
+<img src="/images/azure_ml_1.png"  width="50%" height="50%"> <br>
+<img src="/images/azure_ml_2.png"  width="50%" height="50%"> <br>
+<img src="/images/azure_ml_3.png"  width="50%" height="50%"> <br>
+<img src="/images/azure_ml_4.png"  width="50%" height="50%"> <br>
