@@ -110,8 +110,39 @@ At this point, a Storage Account has been created during the process, and you sh
 
 ### Get the data
 
+The following script will get and extract the dataset from a Google Drive endpoint to your Azure Data Storage.
+
 ```shell
 $ python -m src.download_and_store_data
 ```
 
+A container named according to the value you set for the field CONTAINER_NAME in [```config/development.yml```](config/development.yml) will be created, and you should be able to acknowledge the transferred data on the Azure portal:
+
 <img src="/images/storage.png"  width="75%" height="75%"> <br>
+
+### Launch a training experiment
+
+```shell
+$ python -m src.experiment
+```
+
+Endpoint to launch an experiment on AzureML. <br>
+Required configuration read from [```src/config.py```](src/config.py) file, 
+as well as the entry training script (default: [```src/classification/training.py```](src/classification/training.py)).
+
+#### HyperDrive experiment
+
+If the configuration parameter ```hyperdrive``` is set to True, an HyperDrive hyperparameter search will be performed. <br>
+Several major hyperparameters can thus be tuned automatically, here is a non-exhaustive list:
+- the image resolution given to the model
+- the number of freezed convolutional layers
+- the number of additional dense layers
+- ...
+
+<img src="/images/hyperdrive.png"  width="75%" height="75%"> <br>
+
+#### Regular experiment
+
+If the configuration parameter ```hyperdrive``` is set to False, a regular training experiment is launched, with the hyperparameters fixed in [```src/config.py```](src/config.py).
+
+<img src="/images/experiment.png"  width="75%" height="75%"> <br>
