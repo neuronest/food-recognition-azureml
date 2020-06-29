@@ -4,6 +4,8 @@
 
 **Food recognition** is a end-to-end Data Science project that aims to classify types of dishes with their photographs, using Deep Convolutional Neural Network. <br>
 Data used here is directly based on the Food-101 dataset (https://www.tensorflow.org/datasets/catalog/food101). <br>
+The dataset is balanced but has 101 different classes, which is a quite high number. <br>
+In addition, the training dataset is noised and some wrong label are present. <br>
 Of course, a food classification task is an excuse: the same processes can be applied on a wide variety of computer vision tasks. <br>
 This repository contains the entire code to:
 - Collect the data
@@ -105,7 +107,12 @@ Prerequisites: you must have a valid Azure subscription with sufficient rights.
 
 At this point, a Storage Account has been created during the process, and you should be able to fill the ACCOUNT_NAME and ACCOUNT_KEY fields in [```config/development.yml```](config/development.yml).
 
+Training cluster creation:
+
 <img src="/images/azure_ml_4.png"  width="75%" height="75%"> <br>
+
+Inference AKS cluster creation:
+
 <img src="/images/azure_ml_5.png"  width="75%" height="75%"> <br>
 
 ### Get the data
@@ -144,5 +151,16 @@ Several major hyperparameters can thus be tuned automatically, here is a non-exh
 #### Regular experiment
 
 If the configuration parameter ```hyperdrive``` is set to False, a regular training experiment is launched, with the hyperparameters fixed in [```src/config.py```](src/config.py).
+The underlying TensorFlow model will be saved
 
 <img src="/images/experiment.png"  width="75%" height="75%"> <br>
+<img src="/images/metrics.png"  width="75%" height="75%"> <br>
+
+We manage to have a final test accuracy of **81.18%**, and **84.25%** using Test Time Augmentation (TTA). <br>
+TTA means we apply several different transformations to a single image, and average the predictions of the model for all of them. That give us a more reliable prediction at the expense of a higher inference time.
+
+### Deploy a trained model on Azure Kubernetes Service
+
+Once we are satisfied with a given achieved experiment, 
+
+<img src="/images/experiment_with_id.png"  width="75%" height="75%"> <br>
