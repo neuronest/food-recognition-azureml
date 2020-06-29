@@ -97,23 +97,23 @@ Prerequisites: you must have a valid Azure subscription with sufficient rights.
 
 1\) Create a resource group
 
-<img src="/images/resource_group.png"  width="75%" height="75%"> <br>
+<img src="/images/resource_group.png"  width="100%" height="100%"> <br>
 
 2\) Create a Machine Learning workspace
 
-<img src="/images/azure_ml_1.png"  width="75%" height="75%"> <br>
-<img src="/images/azure_ml_2.png"  width="75%" height="75%"> <br>
-<img src="/images/azure_ml_3.png"  width="75%" height="75%"> <br>
+<img src="/images/azure_ml_1.png"  width="100%" height="100%"> <br>
+<img src="/images/azure_ml_2.png"  width="100%" height="100%"> <br>
+<img src="/images/azure_ml_3.png"  width="100%" height="100%"> <br>
 
 At this point, a Storage Account has been created during the process, and you should be able to fill the ACCOUNT_NAME and ACCOUNT_KEY fields in [```config/development.yml```](config/development.yml).
 
 Training cluster creation:
 
-<img src="/images/azure_ml_4.png"  width="75%" height="75%"> <br>
+<img src="/images/azure_ml_4.png"  width="100%" height="100%"> <br>
 
 Inference AKS cluster creation:
 
-<img src="/images/azure_ml_5.png"  width="75%" height="75%"> <br>
+<img src="/images/azure_ml_5.png"  width="100%" height="100%"> <br>
 
 ### Get the data
 
@@ -125,7 +125,7 @@ $ python -m src.download_and_store_data
 
 A container named according to the value you set for the field CONTAINER_NAME in [```config/development.yml```](config/development.yml) will be created, and you should be able to acknowledge the transferred data on the Azure portal:
 
-<img src="/images/storage.png"  width="75%" height="75%"> <br>
+<img src="/images/storage.png"  width="100%" height="100%"> <br>
 
 ### Launch a training experiment
 
@@ -146,21 +146,21 @@ Several major hyperparameters can thus be tuned automatically, here is a non-exh
 - the number of additional dense layers
 - ...
 
-<img src="/images/hyperdrive.png"  width="75%" height="75%"> <br>
+<img src="/images/hyperdrive.png"  width="100%" height="100%"> <br>
 
 #### Regular experiment
 
 If the configuration parameter ```hyperdrive``` is set to False, a regular training experiment is launched, with the hyperparameters fixed in [```src/config.py```](src/config.py).
-The underlying TensorFlow model will be saved
+The underlying TensorFlow model will be saved inside the 
 
-<img src="/images/experiment.png"  width="75%" height="75%"> <br>
-<img src="/images/metrics.png"  width="50%" height="50%"> <br>
+<img src="/images/experiment.png"  width="100%" height="100%"> <br>
+<img src="/images/metrics.png"  width="100%" height="100%"> <br>
 
 We manage to have a final test accuracy of **81.18%**, and **84.25%** using Test Time Augmentation (TTA). <br>
 TTA means we apply several different transformations to a single image, and average the predictions of the model for all of them. That give us a more reliable prediction at the expense of a higher inference time.
 
 ### Deploy a trained model on Azure Kubernetes Service
 
-Once we are satisfied with a given achieved experiment, 
+Once we are satisfied with a given terminated experiment, we can register the underlying model and deploy it through AKS.
 
-<img src="/images/experiment_with_id.png"  width="75%" height="75%"> <br>
+<img src="/images/experiment_with_id.png"  width="100%" height="100%"> <br>

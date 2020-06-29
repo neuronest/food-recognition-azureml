@@ -124,13 +124,13 @@ def write_image_azure(
 def service_query(
     service_uri: str,
     service_key: str,
-    image: np.ndarray,
+    image: Union[np.ndarray, EagerTensor],
     container: str,
     blob: str,
     number_of_passes: int = 1,
     return_probabilities: bool = False,
 ):
-    encoded_image = list(tf.image.encode_jpeg(image))
+    encoded_image = list(tf.image.encode_jpeg(image).numpy())
     header = {
         "Content-Type": "application/json",
         "Authorization": "Bearer {}".format(service_key),
