@@ -154,7 +154,7 @@ If the configuration parameter ```hyperdrive``` is set to False, a regular train
 The underlying TensorFlow model will be saved
 
 <img src="/images/experiment.png"  width="75%" height="75%"> <br>
-<img src="/images/metrics.png"  width="75%" height="75%"> <br>
+<img src="/images/metrics.png"  width="50%" height="50%"> <br>
 
 We manage to have a final test accuracy of **81.18%**, and **84.25%** using Test Time Augmentation (TTA). <br>
 TTA means we apply several different transformations to a single image, and average the predictions of the model for all of them. That give us a more reliable prediction at the expense of a higher inference time.
