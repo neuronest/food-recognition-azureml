@@ -95,11 +95,11 @@ Prerequisites: you must have a valid Azure subscription with sufficient rights.
 
 1\) Create a resource group
 
-<img src="/images/resource_group.png"  width="50%" height="50%"> <br>
+<img src="/images/resource_group.png"  width="75%" height="75%"> <br>
 
 2\) Create a Machine Learning workspace
 
-<img src="/images/azure_ml_1.png"  width="50%" height="50%"> <br>
-<img src="/images/azure_ml_2.png"  width="50%" height="50%"> <br>
-<img src="/images/azure_ml_3.png"  width="50%" height="50%"> <br>
-<img src="/images/azure_ml_4.png"  width="50%" height="50%"> <br>
+<img src="/images/azure_ml_1.png"  width="75%" height="75%"> <br>
+<img src="/images/azure_ml_2.png"  width="75%" height="75%"> <br>
+<img src="/images/azure_ml_3.png"  width="75%" height="75%"> <br>
+<img src="/images/azure_ml_4.png"  width="75%" height="75%"> <br>
