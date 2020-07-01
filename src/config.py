@@ -58,7 +58,7 @@ class ModelConfig:
         "dropout": True,
         "dropout_begin": 0.2,
         "dropout_max": 0.5,
-        "final_average_pooling": False,
+        "final_average_pooling": True,
         "depth": 2,
     }
 

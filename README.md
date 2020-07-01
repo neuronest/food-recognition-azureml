@@ -137,6 +137,13 @@ Endpoint to launch an experiment on AzureML. <br>
 Required configuration read from [```src/config.py```](src/config.py) file, 
 as well as the entry training script (default: [```src/classification/training.py```](src/classification/training.py)).
 
+#### Regular experiment
+
+If the configuration parameter ```hyperdrive``` is set to False, a regular training experiment is launched, with the hyperparameters fixed in [```src/config.py```](src/config.py).
+The underlying TensorFlow model will be saved inside the experiment run scope.
+
+<img src="/images/experiment.png"  width="100%" height="100%"> <br>
+
 #### HyperDrive experiment
 
 If the configuration parameter ```hyperdrive``` is set to True, an HyperDrive hyperparameter search will be performed. <br>
@@ -146,21 +153,24 @@ Several major hyperparameters can thus be tuned automatically, here is a non-exh
 - the number of additional dense layers
 - ...
 
+Here is an exemple with 15 differently parametrized jobs:
+
 <img src="/images/hyperdrive.png"  width="100%" height="100%"> <br>
+<img src="/images/hyperdrive_metrics.png"  width="100%" height="100%"> <br>
 
-#### Regular experiment
-
-If the configuration parameter ```hyperdrive``` is set to False, a regular training experiment is launched, with the hyperparameters fixed in [```src/config.py```](src/config.py).
-The underlying TensorFlow model will be saved inside the 
-
-<img src="/images/experiment.png"  width="100%" height="100%"> <br>
+We can then choose our best run so far according to the primary metric we wanted to maximize:
 <img src="/images/metrics.png"  width="100%" height="100%"> <br>
 
-We manage to have a final test accuracy of **81.18%**, and **84.25%** using Test Time Augmentation (TTA). <br>
+We manage to have a final test accuracy of **81.75%**, and **84.37%** using Test Time Augmentation (TTA). <br>
 TTA means we apply several different transformations to a single image, and average the predictions of the model for all of them. That give us a more reliable prediction at the expense of a higher inference time.
 
 ### Deploy a trained model on Azure Kubernetes Service
 
-Once we are satisfied with a given terminated experiment, we can register the underlying model and deploy it through AKS.
+Once we are satisfied with a given terminated experiment, we can register the underlying model and deploy it through AKS. <br>
+To achieve this, we need to know the ```run_id```:
 
-<img src="/images/experiment_with_id.png"  width="100%" height="100%"> <br>
+<img src="/images/hyperdrive_run.png"  width="100%" height="100%"> <br>
+
+```shell
+$ python -m app.register_and_deploy --run-id HD_0224446b-525f-41e9-8852-59d6a6e4f3c3_8
+```
