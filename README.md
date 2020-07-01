@@ -159,6 +159,7 @@ Here is an exemple with 15 differently parametrized jobs:
 <img src="/images/hyperdrive_metrics.png"  width="100%" height="100%"> <br>
 
 We can then choose our best run so far according to the primary metric we wanted to maximize:
+
 <img src="/images/metrics.png"  width="100%" height="100%"> <br>
 
 We manage to have a final test accuracy of **81.75%**, and **84.37%** using Test Time Augmentation (TTA). <br>
@@ -167,10 +168,58 @@ TTA means we apply several different transformations to a single image, and aver
 ### Deploy a trained model on Azure Kubernetes Service
 
 Once we are satisfied with a given terminated experiment, we can register the underlying model and deploy it through AKS. <br>
-To achieve this, we need to know the ```run_id```:
+To achieve this, we need to know the ```run_id``` and run the ```register_and_deploy``` module with it:
 
 <img src="/images/hyperdrive_run.png"  width="100%" height="100%"> <br>
 
 ```shell
-$ python -m app.register_and_deploy --run-id HD_0224446b-525f-41e9-8852-59d6a6e4f3c3_8
+$ python -m src.register_and_deploy --run-id HD_0224446b-525f-41e9-8852-59d6a6e4f3c3_8
+```
+
+Your model should be now visible within Azure:
+
+<img src="/images/model.png"  width="100%" height="100%"> <br>
+<img src="/images/deployment.png"  width="100%" height="100%"> <br>
+
+You can test the deployed model with a given container/blob couple:
+
+```shell
+$ python -m src.register_and_deploy --test-only --container source --blob test/apple_pie/101251.jpg
+>>> Testing service: foodrecognition-pretrainedresnet
+... Container: source, blob: test/apple_pie/101251.jpg
+... Elapsed time: 0.42567
+... Response: {'probabilities': None, 'prediction_index': 0, 'prediction': 'apple_pie'}
+```
+
+#### HTTP request format
+
+Here is a full example of how to consume the model with POST request:
+
+```python
+import json
+import requests
+import tensorflow as tf
+from tensorflow.keras.preprocessing.image import load_img
+
+"""
+:param service_uri: URI from the deployed service
+:type service_uri: str
+:param service_key: service access key
+:type service_key: str
+:param path: path of image to predict
+:type path: str
+:param number_of_passes: number of TTA passes to perform, a higher value implies a better performance at the cost of a longer inference time
+:type number_of_passes: int
+:param return_probabilities: whether or not to also return probabilities from the model
+:type return_probabilities: bool
+"""
+
+image = list(tf.image.encode_jpeg(load_img(path)).numpy())
+
+header = {'Content-Type': 'application/json', "Authorization": "Bearer {}".format(service_key)}
+data = {'image': image, 'number_of_passes': number_of_passes, 'return_probabilities': return_probabilities}
+data_raw = bytes(json.dumps({"data": data}), encoding='utf8')
+
+response = requests.post(service_uri, data_raw, headers=header)
+print(response.content)
 ```

@@ -57,6 +57,8 @@ service_name_suffix = args.service_name_suffix
 experiment_name = "-".join(
     [settings["DATASTORE_NAME"], GeneralConfig.architecture_type]
 )
+if GeneralConfig.hyperdrive:
+    experiment_name += "-" + "hyperdrive"
 model_name = experiment_name[
     :32
 ]  # provided model name to Azure must have at most 32 characters
