@@ -60,8 +60,8 @@ This repository contains the entire code to:
 
 
 ```shell**
-git clone https://github.com/neuronest/food_recognition.git
-cd food_recognition
+git clone https://github.com/neuronest/food-recognition.git
+cd food-recognition
 source install.sh
 ```
 
