@@ -12,6 +12,10 @@ This repository contains the entire code to:
 - Train a ResNet model using TensorFlow 2.x on Azure Machine Learning
 - Deploy and expose a trained model on Azure Kubernetes Service
 
+## Global schema <a name="global_schema"></a>
+
+<img src="/images/pipeline_azure_food_recognition.png"  width="100%" height="100%"> <br>
+
 ## Repository Structure <a name="repository-structure"></a>
 
 ```
