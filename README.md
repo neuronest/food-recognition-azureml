@@ -1,5 +1,7 @@
 # Food recognition
 
+This project is also discussed in french directly in our website: https://neuronest.net/classification-de-plats/.
+
 ## Documentation <a name="documentation"></a>
 
 **Food recognition** is a end-to-end Data Science project that aims to classify types of dishes with their photographs, using Deep Convolutional Neural Network. <br>
