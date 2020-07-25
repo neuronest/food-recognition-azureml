@@ -202,11 +202,11 @@ $ python -m src.register_and_deploy --test-only --container source --blob test/a
 Here is a full example of how to consume the model with POST request, we will use [```example_image/bibimbap.jpg```](example_image/bibimbap.jpg):
 
 ```python
-import json
-import requests
-import numpy as np
-import tensorflow as tf
-from tensorflow.keras.preprocessing.image import load_img
+>>> import json
+>>> import requests
+>>> import numpy as np
+>>> import tensorflow as tf
+>>> from tensorflow.keras.preprocessing.image import load_img
 
 """
 :param service_uri: URI from the deployed service
@@ -221,15 +221,15 @@ from tensorflow.keras.preprocessing.image import load_img
 :type return_probabilities: bool
 """
 
-image = list(tf.image.encode_jpeg(np.asarray(load_img(path))).numpy())
+>>> image = list(tf.image.encode_jpeg(np.asarray(load_img(path))).numpy())
 
-header = {'Content-Type': 'application/json', "Authorization": "Bearer {}".format(service_key)}
-data = {'image': image, 'number_of_passes': number_of_passes, 'return_probabilities': return_probabilities}
-data_raw = bytes(json.dumps({"data": data}), encoding='utf8')
+>>> header = {'Content-Type': 'application/json', "Authorization": "Bearer {}".format(service_key)}
+>>> data = {'image': image, 'number_of_passes': number_of_passes, 'return_probabilities': return_probabilities}
+>>> data_raw = bytes(json.dumps({"data": data}), encoding='utf8')
 
-response = requests.post(service_uri, data_raw, headers=header)
-print(response.content)
+>>> response = requests.post(service_uri, data_raw, headers=header)
+>>> print(response.content)
 ```
 ```
->>> b'{"probabilities": null, "prediction_index": 7, "prediction": "bibimbap"}'
+b'{"probabilities": null, "prediction_index": 7, "prediction": "bibimbap"}'
 ```
